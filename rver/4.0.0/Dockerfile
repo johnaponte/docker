@@ -13,9 +13,7 @@ ENV R_VERSION=${R_VERSION:-4.0.0} \
     LANGUAGE=en_US.UTF-8 \
     LC_ALL=en_US.UTF-8 \
     LANG=en_US.UTF-8 \
-    TERM=xterm \
-    DEBIAN_FRONTEND=noninteractive
-  
+    TERM=xterm
 
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
@@ -33,7 +31,7 @@ RUN apt-get update \
     libjpeg62-turbo \
     libopenblas-dev \
     libpangocairo-1.0-0 \
-    libpcre2-32-0 \
+    libpcre2-8-0 \
     libpng16-16 \
     libreadline7 \
     libtiff5 \
@@ -45,9 +43,8 @@ RUN apt-get update \
     zlib1g \
   && echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen \
   && locale-gen en_US en_US.UTF-8 \
-  && /usr/sbin/update-locale LANG=en_US.UTF-8 
-
-  RUN BUILDDEPS="curl \
+  && /usr/sbin/update-locale LANG=en_US.UTF-8 \
+  && BUILDDEPS="curl \
     default-jdk \
     libbz2-dev \
     libcairo2-dev \
@@ -75,21 +72,8 @@ RUN apt-get update \
     xfonts-base \
     xvfb \
     zlib1g-dev" \
-  && apt-get install -y --no-install-recommends $BUILDDEPS 
-
-  ## R's X11 runtime dependencies
-RUN apt-get update \
-  && apt-get install -y --no-install-recommends \
-    libx11-6 \
-    libxss1 \
-    libxt6 \
-    libxext6 \
-    libsm6 \
-    libice6 \
-    xdg-utils \
-  && rm -rf /var/lib/apt/lists/*
-
-RUN cd tmp/ \
+  && apt-get install -y --no-install-recommends $BUILDDEPS \
+  && cd tmp/ \
   ## Download source code
   && curl -O https://cran.r-project.org/src/base/R-4/R-${R_VERSION}.tar.gz \
   ## Extract source code
@@ -145,5 +129,4 @@ RUN cd tmp/ \
   && apt-get autoclean -y \
   && rm -rf /var/lib/apt/lists/*
 
-ENV DEBIAN_FRONTEND teletype
 CMD ["R"]
